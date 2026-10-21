@@ -187,7 +187,7 @@ I did **not** rely on hiding the network name or MAC address filtering. Neither 
 - No port forwards and no automatic port openings.
 - Phone-fraud risk removed.
 - Lab switch inventoried, backed up and ready for VLAN work.
-- Remaining low-severity items are tracked in a private findings list with an owner decision for each (fix, replace or accept).
+- Findings register: **16 findings – 9 fixed, 1 risk accepted** with a documented reason. The remaining 6 low-severity items are tracked in a private findings list with an owner decision for each (fix, replace or accept).
 
 ---
 
