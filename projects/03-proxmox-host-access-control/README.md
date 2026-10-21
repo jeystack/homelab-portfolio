@@ -12,12 +12,13 @@
 
 After the hardware check and BIOS baseline ([Project 01](../01-thinkcentre-intake-bios-baseline/README.md)) and the home network baseline ([Project 02](../02-home-network-security-baseline/README.md)), I installed **Proxmox VE 9.2** on the ThinkCentre M920q and secured the ways to log in **before** creating any virtual machine.
 
-I worked in four steps:
+I worked in five steps:
 
 1. **Install and update:** signed installer, Secure Boot on, correct update repository, full upgrade, CPU microcode check.
 2. **Least privilege:** a personal admin account instead of working as `root` every day.
 3. **Second factor:** TOTP and recovery keys for both accounts that can log in to the web interface.
 4. **SSH:** key-only login with a dedicated key, password login switched off and tested.
+5. **Exposure check:** confirm that nothing on the host is reachable from the internet.
 
 Result: the web interface needs a password **and** a one-time code, SSH needs a passphrase-protected private key, and a password login over SSH is refused. Every step has a verification and a rollback path.
 
@@ -47,7 +48,7 @@ Result: the web interface needs a password **and** a one-time code, SSH needs a 
 
 **In scope:** installation, repositories and updates, users, groups and roles, two-factor authentication, SSH hardening.
 
-**Out of scope (next steps):** restricting the management interface to a management VLAN, Proxmox firewall, backups, creating lab VMs (see section 10).
+**Out of scope (next steps):** restricting the management interface to a management VLAN, Proxmox firewall, backups, creating lab VMs (see section 11).
 
 ---
 
@@ -128,6 +129,17 @@ PermitRootLogin prohibit-password
 
 *Drop-in, syntax check and effective settings after the reload.*
 
+### 4.6 Exposure check: nothing reachable from the internet
+
+Before adding virtual machines I checked the two ways in from the internet:
+
+- **IPv4:** the home network uses NAT, so a device is only reachable if the router forwards a port to it. The router's port-forwarding page and its security report both show **no port forwards**.
+- **Automatic port opening (UPnP/PCP):** switched off for the server, and the router option that lets devices open ports on their own is now off for all devices, including ones added since the first network baseline (Project 02).
+- **IPv6:** there is no NAT here, so a device with a global address is protected only by the router's firewall. The server has **no global IPv6 address**, so it cannot be reached that way.
+- **Wake-on-LAN from the internet:** off.
+- **Listening services:** I listed everything the server accepts connections on. Services that only listen locally are fine. The ones that listen on the network are the input for the Proxmox firewall in the next step; any service I do not need will be blocked or disabled.
+- The router showed the server under an automatically generated name, because a device with a static address never sends its hostname. I renamed it so the device list is readable.
+
 ---
 
 ## 5. Key decisions and rationale
@@ -142,6 +154,7 @@ PermitRootLogin prohibit-password
 | Dedicated SSH key per purpose | Reuse the GitHub key | One revocation does not affect other services |
 | Drop-in file | Edit the main `sshd_config` | First value wins; rollback is one file; package updates do not overwrite it |
 | Keep the console and web shell outside the SSH rules | Disable every other path | Break-glass if the key or laptop is lost |
+| Static address outside the DHCP range, no DHCP reservation | Reservation in the router | A reservation is pointless for a fixed address and could hide a clash |
 
 ---
 
@@ -160,6 +173,10 @@ PermitRootLogin prohibit-password
 | SSH key login | Asks for the key passphrase, not the root password ✅ |
 | SSH password login (forced) | **`Permission denied (publickey)`** ✅ |
 | Effective SSH settings | Password and keyboard-interactive login off; root only by key ✅ |
+| Port forwards on the router | None ✅ (router page and security report) |
+| Automatic port opening (UPnP/PCP) | Off for the server and for all devices ✅ |
+| Global IPv6 address on the server | None ✅ |
+| Listening services | Reviewed and classified; network-facing ones to be restricted by the firewall (next step) |
 
 ![SSH test: key login succeeds, forced password login is refused with Permission denied (publickey)](images/ssh-key-only-login-tests.png)
 
@@ -183,11 +200,23 @@ PermitRootLogin prohibit-password
 - Daily work happens with a personal least-privilege account, not as root.
 - Both web-interface accounts need a password and a one-time code; recovery keys are verified.
 - SSH accepts only a passphrase-protected key; password login is refused and tested.
+- Checked that the server is not reachable from the internet: no port forwards, no automatic port opening, no global IPv6 address.
 - Every change is logged with a reason and a rollback path.
 
 ---
 
-## 8. Skills demonstrated
+## 8. Defender's view
+
+| Weakness before | How it could be abused | Now |
+|---|---|---|
+| Web login with a password only (root as daily account) | Password guessing or reuse gives full control of the hypervisor | Personal least-privilege account, one-time code for both logins |
+| SSH with password login and root allowed | Automated password guessing against a second door | Key-only login, password login refused |
+| Services reachable by accident (port forward, UPnP, IPv6) | A single forgotten rule exposes the management interface to the internet | No forwards, automatic port opening off, no global IPv6 address |
+| One-time secrets handled carelessly | Lost recovery keys or a leaked key file lock me out or let others in | Keys in a password manager and tested, separate authenticator app, passphrase-protected SSH key |
+
+---
+
+## 9. Skills demonstrated
 
 **System administration / IT support**
 - Hypervisor installation and storage layout decisions
@@ -203,24 +232,26 @@ PermitRootLogin prohibit-password
 - Knowing what a control does *not* cover (two-factor on the web interface only)
 - Testing both the allowed and the forbidden login path
 
-**FISI exam topics touched:** operating systems and virtualisation, user and rights management (group → role → path, compare AGDLP in Active Directory), IT security protection goals, asymmetric encryption, technical documentation.
+**FISI exam topics touched:** IPv4 NAT versus IPv6 addressing, port forwarding, DHCP and static addressing, operating systems and virtualisation, user and rights management (group → role → path, compare AGDLP in Active Directory), IT security protection goals, asymmetric encryption, technical documentation.
 
 ---
 
-## 9. Lessons learned
+## 10. Lessons learned
 
 - **One-time dialogs and browser extensions:** the recovery-key dialog froze twice in my normal browser window, most likely because a password-manager extension hooked into it. I pressed reload once, which lost the one-time display of keys that were already generated. Fix: remove the empty recovery entry and create it again. Rules since then: generate one-time secrets in a private window, never reload while a one-time dialog is open, and keep a working fallback login before touching two-factor settings.
 - **Test the recovery path, not just the main path.** Using each recovery key once proved that the copy in the password manager is correct.
 - **Know the scope of a control.** Two-factor on the web interface left SSH as a password-only second door.
 - **Check where a command runs.** One test command ran in the server's own web shell instead of on my laptop. Harmless here, but it showed why I check the prompt before pressing Enter.
+- **IPv4 and IPv6 are different exposure questions.** NAT hides devices by accident on IPv4; on IPv6 only the firewall protects them. I checked both instead of assuming.
 - **File names matter:** the editor saved my SSH client config as `config.txt`, which SSH silently ignores. A rename fixed it.
 - **A pasted command can carry hidden characters** from a browser shell. Short commands, or a look at the line before Enter, avoid that.
 
 ---
 
-## 10. What I would improve next
+## 11. What I would improve next
 
 - [ ] Reach the management interface only from a management VLAN (never through a port forward).
+- [ ] Block or disable the network services I do not need, found in the listening-services review.
 - [ ] Turn on the Proxmox firewall (datacenter and VM level) with default deny for the lab bridge.
 - [ ] Separate bridge without a physical port for intentionally vulnerable VMs.
 - [ ] Scheduled `vzdump` backups to separate storage, followed by a restore test.

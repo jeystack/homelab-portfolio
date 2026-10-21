@@ -133,7 +133,7 @@ I decided **not** to load factory defaults first: the settings were sane and no 
 
 | Setting | Before | After | Reason |
 |---|---|---|---|
-| BIOS administrator (supervisor) password | Not set | **Set** | Stops anyone with physical access from changing BIOS settings, for example disabling Secure Boot. (USB boot is still allowed for now – see section 10.) |
+| BIOS administrator (supervisor) password | Not set | **Set** | Stops anyone with physical access from changing BIOS settings, for example disabling Secure Boot. (The one-time boot menu is protected separately, see the last two rows of this table.) |
 | Power-on password | Not set | **Not set** (deliberate) | A server must reboot unattended after updates or power loss |
 | Require admin password for BIOS flashing | No | **Yes** | BIOS updates and re-flashing require the password |
 | Allow flashing to a previous BIOS version | Yes | **No** (after the firmware check in 4.6) | Prevents downgrading to an older, vulnerable BIOS |
@@ -143,6 +143,8 @@ I decided **not** to load factory defaults first: the settings were sane and no 
 | Wake-on-LAN | Automatic | **Disabled** | Runs 24/7, nothing to wake |
 | Onboard audio | Enabled | **Disabled** | Not needed on a server |
 | After power loss | Last state | **Power on** | Server comes back automatically after a power cut |
+| Boot sequences (primary, automatic, error) | USB, SATA and network entries included | **Only the internal SSD** | A USB live system can no longer be started from the boot menu |
+| Require admin password for the one-time boot menu | No | **Yes** | The admin password only protected the setup screen; without this setting anyone with physical access could boot a USB system past the Proxmox login, two-factor authentication and SSH keys |
 
 | After: Intel AMT disabled | After: network boot and Wi-Fi disabled |
 |---|---|
@@ -199,6 +201,8 @@ I decided **not** to load factory defaults first: the settings were sane and no 
 | System date and time | Correct ✅ (a wrong clock can break TLS and updates, or point to a weak CMOS battery) |
 | Memory test | PASS, 0 errors ✅ |
 | SSD health and short self-test | PASSED / completed without error ✅ |
+| One-time boot menu after the boot lock | Asks for the administrator password; lists only the internal SSD ✅ |
+| Normal boot after the boot lock | Server starts without a prompt, web interface reachable ✅ |
 | Hardware inventory | Recorded in the lab's hardware inventory ✅ |
 
 | Boot menu after hardening | Password prompt when entering setup |
@@ -224,6 +228,7 @@ I decided **not** to load factory defaults first: the settings were sane and no 
 - Previous owner's remote-management feature disabled; no leftover passwords or tracking.
 - Secure firmware baseline in place: admin password, protected flashing, UEFI-only, Secure Boot, TPM, unused interfaces off.
 - Device restarts on its own after power loss and boots without a password.
+- Boot is locked to the internal SSD; the one-time boot menu needs the admin password.
 - End-of-support firmware risk documented, mitigated and accepted.
 - Every change logged with a reason and a rollback path.
 
@@ -263,8 +268,8 @@ The device was then ready for the hypervisor installation (Project 03).
 
 ## 10. What I would improve next
 
-- [ ] Restrict booting after installation: internal SSD first, USB boot disabled or protected by the admin password.
-- [ ] Decide whether to require the admin password for the one-time boot menu.
+- [x] Restrict booting after installation: only the internal SSD is in the boot sequences (done 21 October 2026).
+- [x] Require the admin password for the one-time boot menu: yes (done 21 October 2026). Needing USB again (reinstall, memory test) now means the password, or temporarily re-including USB and documenting it.
 - [ ] Decide on chassis intrusion detection (logs when the case is opened).
 - [ ] Consider clearing the TPM once to remove any keys from the previous owner.
 - [ ] Test the password-clear rollback procedure on paper against the hardware manual.
