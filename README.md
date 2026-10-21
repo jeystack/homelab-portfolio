@@ -16,7 +16,7 @@ Each project shows what I built, why I made each decision, how I checked the res
 |---|---|---|---|
 | 01 | [ThinkCentre M920q – Hardware Intake and BIOS Security Baseline](projects/01-thinkcentre-intake-bios-baseline/README.md) | Checking a used server before use: hardware verification, RAM/SSD health tests, BIOS/UEFI hardening, firmware lifecycle risk, rollback plan | Published |
 | 02 | [Home Network Security Baseline – Router, Wi-Fi and Lab Switch](projects/02-home-network-security-baseline/README.md) | Securing the home network before the lab goes live: default credentials removed, two-factor confirmation for router changes, guest isolation, no port forwards, switch baseline | Published |
-| 03 | Proxmox VE Host Deployment and Access Control | Hypervisor installation, update repositories, least-privilege admin accounts, two-factor authentication | In progress |
+| 03 | [Proxmox VE Host – Installation, Updates and Access Control](projects/03-proxmox-host-access-control/README.md) | Hypervisor installation with Secure Boot, update repositories and microcode check, least-privilege admin account, two-factor authentication for both web logins, key-only SSH with a tested refusal of password login | Published (firewall, management network and backups next) |
 | 04 | Network Design and Segmentation | VLAN plan, firewall between lab networks, management network, isolation testing | Planned |
 
 **Short on time?** Read [Project 01](projects/01-thinkcentre-intake-bios-baseline/README.md). It shows my whole working method in one example.
@@ -30,6 +30,7 @@ Each project shows what I built, why I made each decision, how I checked the res
 | Networking | Router and switch administration, DHCP reservations, configuration backups | Guest isolation, disabling UPnP and port forwards, spotting clear-text management protocols |
 | Hardware | Verifying delivered hardware against the order, health testing RAM and SSD | Checking a used device for leftover remote management and previous-owner settings |
 | Configuration | BIOS/UEFI setup for an unattended server (virtualisation, power recovery, boot order) | Reducing attack surface: disabling unused interfaces and out-of-band management |
+| Access control | Personal admin account instead of root, groups and roles, key-based SSH | Two-factor authentication (TOTP), recovery-key testing, host key verification, refusing password login |
 | Lifecycle | Checking firmware versions against vendor support | Documenting an end-of-support risk, its mitigations and when to re-evaluate it |
 | Change control | Dated change notes, changelog with a rollback path for every change | Evidence-based verification after each change |
 | Documentation | Clear, reproducible notes another admin could follow | Separating private lab notes from sanitised public evidence |
@@ -39,7 +40,7 @@ Each project shows what I built, why I made each decision, how I checked the res
 ## Lab overview
 
 - **Host:** refurbished Lenovo ThinkCentre M920q Tiny (6-core Intel i5, 32 GB RAM, 512 GB NVMe SSD)
-- **Hypervisor:** Proxmox VE (installed, hardening in progress)
+- **Hypervisor:** Proxmox VE 9.2 (installed, updated, access control and SSH hardened; firewall and backups next)
 - **Network:** hardened home router with an isolated guest Wi-Fi; managed 8-port switch with 802.1Q VLAN support; VLAN segmentation planned with a firewall VM between lab networks
 - **Planned workloads:** Windows Server (Active Directory, DNS, DHCP), Ubuntu Server, Windows 11 client, isolated security-practice VMs
 
@@ -75,7 +76,7 @@ Cisco Networking Academy **certificates of completion** (course completions, not
 
 1. Hardware intake and BIOS/firmware security baseline ✅
 2. Home network security baseline ✅
-3. Proxmox host deployment *(in progress)*
+3. Proxmox host deployment and access control ✅ *(firewall, management network and backups next)*
 4. Network design and segmentation
 5. Windows and Linux administration
 6. Automation with Bash, PowerShell and Python

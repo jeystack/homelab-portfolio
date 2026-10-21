@@ -234,4 +234,4 @@ I did **not** rely on hiding the network name or MAC address filtering. Neither 
 
 ---
 
-**Previous project:** [01 – ThinkCentre Intake and BIOS Baseline](../01-thinkcentre-intake-bios-baseline/README.md) · **Next project:** Proxmox VE Host Deployment *(in progress)* · [Back to overview](../../README.md)
+**Previous project:** [01 – ThinkCentre Intake and BIOS Baseline](../01-thinkcentre-intake-bios-baseline/README.md) · **Next project:** [03 – Proxmox VE Host: Installation, Updates and Access Control](../03-proxmox-host-access-control/README.md) · [Back to overview](../../README.md)
