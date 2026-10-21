@@ -1,0 +1,22 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.obsidian/
+
+# Never commit secrets or raw evidence (safety net – the real rule is: keep them out of this folder)
+*.kdbx
+*.pem
+*.key
+*.ovpn
+.env
+id_rsa*
+*.cfg
+*.export
+*.pcap
+*.pcapng
+
+# Unredacted originals – keep them in the private vault, never here
+*-raw.*
+*-unredacted.*
