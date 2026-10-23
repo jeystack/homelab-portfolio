@@ -17,7 +17,8 @@ Each project shows what I built, why I made each decision, how I checked the res
 | 01 | [ThinkCentre M920q – Hardware Intake and BIOS Security Baseline](projects/01-thinkcentre-intake-bios-baseline/README.md) | Checking a used server before use: hardware verification, RAM/SSD health tests, BIOS/UEFI hardening, firmware lifecycle risk, rollback plan | Published |
 | 02 | [Home Network Security Baseline – Router, Wi-Fi and Lab Switch](projects/02-home-network-security-baseline/README.md) | Securing the home network before the lab goes live: default credentials removed, two-factor confirmation for router changes, guest isolation, no port forwards, switch baseline | Published |
 | 03 | [Proxmox VE Host – Installation, Updates and Access Control](projects/03-proxmox-host-access-control/README.md) | Hypervisor installation with Secure Boot, update repositories and microcode check, least-privilege admin account, two-factor authentication for both web logins, key-only SSH with a tested refusal of password login | Published (firewall, management network and backups next) |
-| 04 | Network Design and Segmentation | VLAN plan, firewall between lab networks, management network, isolation testing | Planned |
+| 04 | [Isolated Virtual Lab – Network Isolation, Verified Installers and Server Baselines](projects/04-isolated-vm-lab-baseline/README.md) | Laptop lab built isolation-first: host-only network without DHCP or host adapter, installers verified by hash or signature, Windows and Linux server baselines with fixed addresses, a narrow firewall rule instead of switching the firewall off, snapshots | Part 1 published (Active Directory, DHCP, client, attack VM and isolation test next) |
+| 05 | Network Design and Segmentation | VLAN plan, firewall between lab networks, management network, isolation testing | Planned |
 
 **Short on time?** Read [Project 01](projects/01-thinkcentre-intake-bios-baseline/README.md). It shows my whole working method in one example.
 
@@ -42,7 +43,8 @@ Each project shows what I built, why I made each decision, how I checked the res
 - **Host:** refurbished Lenovo ThinkCentre M920q Tiny (6-core Intel i5, 32 GB RAM, 512 GB NVMe SSD)
 - **Hypervisor:** Proxmox VE 9.2 (installed, updated, access control and SSH hardened; firewall and backups next)
 - **Network:** hardened home router with an isolated guest Wi-Fi; managed 8-port switch with 802.1Q VLAN support; VLAN segmentation planned with a firewall VM between lab networks
-- **Planned workloads:** Windows Server (Active Directory, DNS, DHCP), Ubuntu Server, Windows 11 client, isolated security-practice VMs
+- **Second lab (laptop, VMware Workstation):** isolated virtual network with a Windows Server and an Ubuntu Server VM installed (part 1); Active Directory, DNS, DHCP, Windows 11 client and a security-practice VM next
+- **Planned workloads:** Active Directory, DNS and DHCP, Windows 11 client, isolated security-practice VMs
 
 ---
 
@@ -77,10 +79,11 @@ Cisco Networking Academy **certificates of completion** (course completions, not
 1. Hardware intake and BIOS/firmware security baseline ✅
 2. Home network security baseline ✅
 3. Proxmox host deployment and access control ✅ *(firewall, management network and backups next)*
-4. Network design and segmentation
-5. Windows and Linux administration
-6. Automation with Bash, PowerShell and Python
-7. Security monitoring or an incident-response mini-lab
+4. Isolated virtual lab with Windows and Linux server baselines ✅ *(part 1; Active Directory, DHCP and isolation test next)*
+5. Network design and segmentation
+6. Windows and Linux administration (Active Directory, Group Policy, Samba, hardening)
+7. Automation with Bash, PowerShell and Python
+8. Security monitoring or an incident-response mini-lab
 
 ---
 

@@ -259,4 +259,4 @@ Before adding virtual machines I checked the two ways in from the internet:
 
 ---
 
-**Previous project:** [02 – Home Network Security Baseline](../02-home-network-security-baseline/README.md) · **Next project:** Network Design and Segmentation *(planned)* · [Back to overview](../../README.md)
+**Previous project:** [02 – Home Network Security Baseline](../02-home-network-security-baseline/README.md) · **Next project:** [04 – Isolated Virtual Lab](../04-isolated-vm-lab-baseline/README.md) · [Back to overview](../../README.md)
