@@ -18,6 +18,7 @@ Each project shows what I built, why I made each decision, how I checked the res
 | 02 | [Home Network Security Baseline – Router, Wi-Fi and Lab Switch](projects/02-home-network-security-baseline/README.md) | Securing the home network before the lab goes live: default credentials removed, two-factor confirmation for router changes, guest isolation, no port forwards, switch baseline | Published |
 | 03 | [Proxmox VE Host – Installation, Updates and Access Control](projects/03-proxmox-host-access-control/README.md) | Hypervisor installation with Secure Boot, update repositories and microcode check, least-privilege admin account, two-factor authentication for both web logins, key-only SSH with a tested refusal of password login | Published (firewall, management network and backups next) |
 | 04 | Network Design and Segmentation | VLAN plan, firewall between lab networks, management network, isolation testing | Planned |
+| – | [LAMP Server on Proxmox](https://github.com/jeystack/lamp-server) *(separate repository, course assignment)* | Debian VM for Apache, MariaDB and PHP: installer verified by SHA-256 checksum and GPG signature (including troubleshooting a BAD signature caused by CRLF line endings), static IP planning outside the DHCP range with ARP host discovery | In progress (phase 0: preparation done) |
 
 **Short on time?** Read [Project 01](projects/01-thinkcentre-intake-bios-baseline/README.md). It shows my whole working method in one example.
 
@@ -42,6 +43,7 @@ Each project shows what I built, why I made each decision, how I checked the res
 - **Host:** refurbished Lenovo ThinkCentre M920q Tiny (6-core Intel i5, 32 GB RAM, 512 GB NVMe SSD)
 - **Hypervisor:** Proxmox VE 9.2 (installed, updated, access control and SSH hardened; firewall and backups next)
 - **Network:** hardened home router with an isolated guest Wi-Fi; managed 8-port switch with 802.1Q VLAN support; VLAN segmentation planned with a firewall VM between lab networks
+- **In progress:** LAMP stack on a Debian VM (preparation done, VM not yet built; [separate repository](https://github.com/jeystack/lamp-server))
 - **Planned workloads:** Active Directory, DNS and DHCP, Windows 11 client, isolated security-practice VMs
 
 ---
